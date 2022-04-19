@@ -164,7 +164,7 @@ int main()
 //_________________________________________
 void loadImage () {
    char imageFileName[100];
-    while(true)
+    while(true)   // Validate the image
             {       // Get gray scale image file name
                 cout << "Enter the source image file name: \n" ;
 
@@ -184,7 +184,7 @@ void loadImage () {
 }
 void loadImage2 () {
    char imageFileName[100];
-    while(true)
+    while(true)     // Validate the image
             {       // Get gray scale image file name
                 cout << "Enter the second source image file name: \n" ;
 
@@ -399,7 +399,7 @@ void Rotate_file_180_Degree() // Author: Youssef Abdelghafar Abdeltawab - 202104
 }
 
 // Function to Rotate 270 degree
-void Rotate_file_270_Degree() // Author: Youssef Abdelghafar Abdeltawab
+void Rotate_file_270_Degree() // Author: Youssef Abdelghafar Abdeltawab - 20210474
 {
     for (int i = 0; i < SIZE/2; i++)
     {
@@ -409,8 +409,50 @@ void Rotate_file_270_Degree() // Author: Youssef Abdelghafar Abdeltawab
     }
 }
 
+void shrink() { // //Author: Abdallah Hussein Ibrahim Hussein - 20210235
+string choice;
+  int choice0;
+  cout << "Type 1 if you want to to shrink the image dimensions to 1/2.\nType 2 if you want to to shrink the image dimensions to 1/3.\nType 3 if you want to to shrink the image dimensions to 1/4.\n";
+  while (true)
+  {
+    getline(cin,choice);
+    if (choice == "1" || choice == "2"|| choice == "3")
+    {
+    choice0 = stoi(choice); 
+    break;
+    }
+    else {
+      cout << "INVALD\n";continue;
+      }
+  }
+  switch (choice0)
+  {
+  case (1):
+      for (int i = 0; i < SIZE; i++) {
+          for (int j = 0; j< SIZE; j++) {       
+            image3[i/2][j/2]= image[i][j];
+          }
+    }
+    break;
+    case (2):
+      for (int i = 0; i < SIZE; i++) {
+          for (int j = 0; j< SIZE; j++) {
+              image3[i/3][j/3]= image[i][j]; 
+          }
+    }
+    break;
+    case(3):
+    for (int i = 0; i < SIZE; i++) {
+          for (int j = 0; j< SIZE; j++) {
+              image3[i/4][j/4]= image[i][j]; 
+          }
+    }
+  default:
+    break;
+  }
+}
 
-void blur() {
+void blur() { //Author: Abdallah Hussein Ibrahim Hussein - 20210235
   for (int i = 0; i <= SIZE; i++)
 {
   for (int j = 0; j <= SIZE; j++)
@@ -457,47 +499,5 @@ for (int i = 0; i < SIZE; i++) {
         else {
         image[i][j] = ((image2[i-1][j-1]+image2[i-1][j]+image2[i-1][j+1]+image2[i-1][j+2]+image2[i-1][j+3]+image2[i][j-1]+image2[i][j]+image2[i][j+1]+image2[i][j+2]+image2[i][j+3]+image2[i+1][j-1]+image2[i+1][j]+image2[i+1][j+1]+image2[i+1][j+2]+image2[i+1][j+3]+image2[i+2][j-1]+image2[i+2][j]+image2[i+2][j+1]+image2[i+2][j+2]+image2[i+2][j+3]+image2[i+3][j-1]+image2[i+3][j]+image2[i+3][j+1]+image2[i+3][j+2]+image2[i+3][j+3])/25);}
     }   //                 2 0              2 1            2 2            0   0             0 1         0 2             1 0            1 1             1    2
-  }
-}
-void shrink() {
-string choice;
-  int choice0;
-  cout << "Type 1 if you want to to shrink the image dimensions to 1/2.\nType 2 if you want to to shrink the image dimensions to 1/3.\nType 3 if you want to to shrink the image dimensions to 1/4.\n";
-  while (true)
-  {
-    getline(cin,choice);
-    if (choice == "1" || choice == "2"|| choice == "3")
-    {
-    choice0 = stoi(choice); 
-    break;
-    }
-    else {
-      cout << "INVALD\n";continue;
-      }
-  }
-  switch (choice0)
-  {
-  case (1):
-      for (int i = 0; i < SIZE; i++) {
-          for (int j = 0; j< SIZE; j++) {       
-            image3[i/2][j/2]= image[i][j];
-          }
-    }
-    break;
-    case (2):
-      for (int i = 0; i < SIZE; i++) {
-          for (int j = 0; j< SIZE; j++) {
-              image3[i/3][j/3]= image[i][j]; 
-          }
-    }
-    break;
-    case(3):
-    for (int i = 0; i < SIZE; i++) {
-          for (int j = 0; j< SIZE; j++) {
-              image3[i/4][j/4]= image[i][j]; 
-          }
-    }
-  default:
-    break;
   }
 }
