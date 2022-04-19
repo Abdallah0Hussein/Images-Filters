@@ -1,6 +1,6 @@
 // FCAI – Programming 1 – 2022 - Assignment 3
 // Program: Images Filters.cpp
-// Author: Abdallah Hussein Ibrahim Hussein - Esraa Mahmoud Abdelmohsen - Youssef Abdelghafar Abdeltawab 
+// Author: Abdallah Hussein Ibrahim Hussein - Esraa Mahmoud Abdelmohsen - Youssef Abdelghafar Abdeltawab
 // IDs: 20210235 - 20210063 - 20210474
 // Group: A
 // Date: April  2022
@@ -16,6 +16,7 @@ unsigned char image[SIZE][SIZE];
 unsigned char image2[SIZE][SIZE];
 unsigned char image3[SIZE][SIZE];
 unsigned char flip[SIZE][SIZE];
+unsigned char edited[SIZE][SIZE];
 void loadImage ();
 void loadImage2 ();
 void saveImage ();
@@ -29,7 +30,8 @@ void Rotate_file_90_Degree();
 void Rotate_file_180_Degree();
 void Rotate_file_270_Degree();
 void Darken_and_Lighten();
-
+void detect();
+void mirror();
 void shrink();
 void blur();
 
@@ -47,10 +49,10 @@ int main()
     cout << "4- Flip Image\n";
     cout << "5- Darken and Lighten Image\n";
     cout << "6- Rotate Image\n";
-    cout << "7- ??? Image\n";
+    cout << "7- Detect Image\n";
     cout << "8- ??? Image\n";
     cout << "9- Shrink Image\n";
-    cout << "10- ??? Image\n";
+    cout << "10- Mirror Image\n";
     cout << "11- ??? Image\n";
     cout << "12- Blur Image\n";
     cout << "0- Exit\n";
@@ -69,27 +71,32 @@ int main()
       cout << "INVALD\n";
       }
     }
-    
+
     if(num_of_filter == 1){
-      
+
       black_and_white();
       saveImage();
     }
     if(num_of_filter == 2){
-      
+
       Filter_InvertImage();
       saveImage();
     }
     if(num_of_filter == 3){
-      
+
       loadImage2();
       Merge();
       saveImage3();
     }
     if(num_of_filter == 4){
-      
+
       flip_image();
       saveImage();
+    }
+    if(num_of_filter == 5){
+
+        Darken_and_Lighten();
+        saveImage();
     }
     if(num_of_filter == 6){
       string rotate;
@@ -108,34 +115,31 @@ int main()
     }
     if (rotate_degree == 90)
         {
-            
+
             Rotate_file_90_Degree();
             saveImage();
         }
         // choose 180 degree if you want rotate 180 degree.
         else if (rotate_degree==180)
         {
-            
+
             Rotate_file_180_Degree();
             saveImage();
         }
         // choose 270 degree if you want rotate 270 degree.
         else if (rotate_degree == 270)
         {
-            
+
             Rotate_file_270_Degree();
             saveImage();
         }
     }
-    if(num_of_filter == 5){
-     
-      Darken_and_Lighten();
-      saveImage();
+    if (num_of_filter==7)
+    {
+        detect();
+        saveImage();
     }
-    // if(num_of_filter == 7){
-    //   function();
-    //   saveImage3();
-    // }
+
     // if(num_of_filter == 8){
     //   function();
     //   saveImage3();
@@ -144,10 +148,10 @@ int main()
       shrink();
       saveImage3();
     }
-    // if(num_of_filter == 10){
-    //   function();
-    //   saveImage3();
-    // }
+     if(num_of_filter == 10){
+       mirror();
+       saveImage();
+     }
     // if(num_of_filter == 11){
     //   function();
     //   saveImage3();
@@ -267,7 +271,7 @@ for (int i = 0; i < SIZE; i++)
   for (int j = 0; j < SIZE; j++)
   {
       image3[i][j] = ((image[i][j]+image2[i][j])/2);
-  } 
+  }
 }
 }
 void flip_image() { // Author: Esraa Mahmoud Abdelmohsen - 20210063
@@ -337,20 +341,20 @@ void Darken_and_Lighten() { // Author: Abdallah Hussein Ibrahim Hussein - 202102
     getline(cin,choice);
     if ((choice == "1" || choice == "2"))
     {
-    choice0 = stoi(choice); 
+    choice0 = stoi(choice);
     break;
     }
     else {
       cout << "INVALD\n";
       }
-  }  
+  }
   switch (choice0)
   {
   case (1):
       for (int i = 0; i < SIZE; i++) {
           for (int j = 0; j< SIZE; j++) {
                                                 // darken below
-            image[i][j] = (image[i][j]/2);       
+            image[i][j] = (image[i][j]/2);
           }
     }
     break;
@@ -364,7 +368,41 @@ void Darken_and_Lighten() { // Author: Abdallah Hussein Ibrahim Hussein - 202102
     break;
   default:
     break;
-  } 
+  }
+}
+void detect()// Author: Esraa Mahmoud Abdelmohsen - 20210063
+{
+    //make empty array in the first called edited.
+    for( int i=0;i<SIZE;i++)
+    {
+        for ( int j=0;j<SIZE;j++)
+            //make all indexes white.
+            edited[i][j]=255;
+    }
+    for (int i=0;i<SIZE;i++)
+    {
+        for(int j=0; j<SIZE;j++)
+        {
+            //check if the index[i][j]>128 and the index after it(for column) and <128 but black point in array edited
+            if (image[i][j]>128 && image[i][j+1]<128)
+                edited[i][j]=0;
+            //check if the index[i][j]<128 and the index after it and >128(for column) but black point in array edited
+            if (image[i][j]<128 && image[i][j+1]>128)
+                edited[i][j]=0;
+            //check if the index[i][j]>128 and the index after it and <128(for rows) but black point in array edited
+            if (image[i][j]>128 && image[i+1][j]<128)
+                edited[i][j]=0;
+            //check if the index[i][j]<128 and the index after it and >128(for rows) but black point in array edited
+            if (image[i][j]<128 && image[i+1][j]>128)
+                edited[i][j]=0;
+        }
+    }
+    for (int i=0;i<SIZE;i++)
+    {
+        for(int j=0;j<SIZE;j++)
+            //move what added in array edited in original image.
+            image[i][j]=edited[i][j];
+    }
 }
 // Function to Rotate 90 degree
 void Rotate_file_90_Degree() //Author: Youssef Abdelghafar Abdeltawab - 20210474
@@ -411,14 +449,14 @@ void Rotate_file_270_Degree() // Author: Youssef Abdelghafar Abdeltawab - 202104
 
 void shrink() { // //Author: Abdallah Hussein Ibrahim Hussein - 20210235
 string choice;
-  int choice0;
+  int choice0;     // Validate the input
   cout << "Type 1 if you want to to shrink the image dimensions to 1/2.\nType 2 if you want to to shrink the image dimensions to 1/3.\nType 3 if you want to to shrink the image dimensions to 1/4.\n";
   while (true)
   {
     getline(cin,choice);
     if (choice == "1" || choice == "2"|| choice == "3")
     {
-    choice0 = stoi(choice); 
+    choice0 = stoi(choice);
     break;
     }
     else {
@@ -429,27 +467,127 @@ string choice;
   {
   case (1):
       for (int i = 0; i < SIZE; i++) {
-          for (int j = 0; j< SIZE; j++) {       
-            image3[i/2][j/2]= image[i][j];
+          for (int j = 0; j< SIZE; j++) {
+            image3[i/2][j/2]= image[i][j]; // reduce every pixel to 1/2 to shrink the image dimensions to 1/2
           }
     }
     break;
     case (2):
       for (int i = 0; i < SIZE; i++) {
           for (int j = 0; j< SIZE; j++) {
-              image3[i/3][j/3]= image[i][j]; 
+              image3[i/3][j/3]= image[i][j]; // reduce every pixel to 1/3 to shrink the image dimensions to 1/3
           }
     }
     break;
     case(3):
     for (int i = 0; i < SIZE; i++) {
           for (int j = 0; j< SIZE; j++) {
-              image3[i/4][j/4]= image[i][j]; 
+              image3[i/4][j/4]= image[i][j]; // reduce every pixel to 1/4 to shrink the image dimensions to 1/4
           }
     }
   default:
     break;
   }
+}
+void mirror()// Author: Esraa Mahmoud Abdelmohsen - 20210063
+{
+    int option;
+    cout<<"1_choose 1 if you want 1/2 right \n"
+          "2_choose 2 if you want 1/2 left \n"
+          "3_choose 3 if you want 1/2 upper\n"
+          "4_choose 4 if you want 1/2 lower\n";
+    string need;
+    while (true)
+    {
+      getline(cin, need);
+      if(need == "1" || need == "2"|| need == "3"|| need == "4")
+      {
+      option = stoi(need);
+      break;}
+      else {
+      cout << "INVALD\n";
+      }
+    }
+    if (option==1) {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                //(SIZE -1)-j to flip columns in original image.
+                flip[i][j] = image[i][(SIZE - 1) - j];
+            }
+        }
+        for (int i = 0; i < SIZE; i++) {
+            //loop from the middle index (in columns) to the end to edit this part.
+            for (int j = (SIZE / 2); j < SIZE; j++) {
+                //make second half in columns in original image = second half in columns in flip image.
+                image[i][j] = flip[i][j];
+
+            }
+        }
+    }
+    if(option==2)
+    {
+
+        for (int i=0;i<SIZE;i++)
+        {
+            for (int j=0;j<SIZE;j++)
+            {
+                //(SIZE -1)-i to flip rows in original image.
+                flip[i][j] = image[(SIZE - 1) -i][j];
+            }
+        }
+        //loop from the middle index (in rows) to the end to edit this part.
+        for (int i=(SIZE/2);i<SIZE;i++)
+        {
+            for (int j=0;j<SIZE;j++)
+            {
+                //make second half in rows in original image = second half in rows in flip image.
+                image[i][j]=flip[i][j];
+
+            }
+        }
+    }
+    if (option==3)
+    {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                //(SIZE -1)-j to flip columns in original image.
+                flip[i][j] = image[i][(SIZE - 1) - j];
+            }
+        }
+        for (int i = 0; i < SIZE; i++) {
+            //loop from the first index (in columns) to middle to edit this part.
+            for (int j = 0; j < (SIZE / 2); j++) {
+                //make first half in columns in original image = first half in columns in flip image.
+                image[i][j] = flip[i][j];
+
+            }
+        }
+
+
+
+    }
+    if(option==4)
+    {
+
+        for (int i=0;i<SIZE;i++)
+        {
+            for (int j=0;j<SIZE;j++)
+            {
+                //(SIZE -1)-i to flip rows in original image.
+                flip[i][j] = image[(SIZE - 1) -i][j];
+            }
+        }
+        //loop from the first index (in rows) to middle to edit this part.
+        for (int i=0;i<(SIZE/2);i++)
+        {
+            for (int j=0;j<SIZE;j++)
+            {
+                //make first half in rows in original image = first half in rows in flip image.
+                image[i][j]=flip[i][j];
+
+            }
+        }
+    }
 }
 
 void blur() { //Author: Abdallah Hussein Ibrahim Hussein - 20210235
@@ -458,46 +596,47 @@ void blur() { //Author: Abdallah Hussein Ibrahim Hussein - 20210235
   for (int j = 0; j <= SIZE; j++)
   {
       image2[i][j] = image[i][j];     // make another image that has the same pixels as the first image to avoid calculating a blurred pixel.
-  }}
+  }
+}
 // entire image without the border
 for (int i = 1; i < SIZE-3; i++)
 {
   for (int j = 1; j < SIZE-3; j++)
-  {
+  {         // all entire pixels
       image[i][j] = ((image2[i-1][j-1]+image2[i-1][j]+image2[i-1][j+1]+image2[i-1][j+2]+image2[i-1][j+3]+image2[i][j-1]+image2[i][j]+image2[i][j+1]+image2[i][j+2]+image2[i][j+3]+image2[i+1][j-1]+image2[i+1][j]+image2[i+1][j+1]+image2[i+1][j+2]+image2[i+1][j+3]+image2[i+2][j-1]+image2[i+2][j]+image2[i+2][j+1]+image2[i+2][j+2]+image2[i+2][j+3]+image2[i+3][j-1]+image2[i+3][j]+image2[i+3][j+1]+image2[i+3][j+2]+image2[i+3][j+3])/25);
                             //  0 0          0 1             0 2           1 0             1 1             1 2           2 0           2 1                 2 2
-  } 
+  }
 }
 // last rows
 for (int i = 253; i < SIZE; i++) {
       for (int j = 1; j < SIZE-3; j++) {
+          // // get all pixels above last pixels
           image[i][j] = ((image2[i-1][j-1]+image2[i-1][j]+image2[i-1][j+1]+image2[i-1][j+2]+image2[i-1][j+3]+image2[i][j-1]+image2[i][j]+image2[i][j+1]+image2[i][j+2]+image2[i][j+3]+image2[i-4][j-1]+image2[i-4][j]+image2[i-4][j+1]+image2[i-4][j+2]+image2[i-4][j+3]+image2[i-2][j-1]+image2[i-2][j]+image2[i-2][j+1]+image2[i-2][j+2]+image2[i-2][j+3]+image2[i-3][j-1]+image2[i-3][j]+image2[i-3][j+1]+image2[i-3][j+2]+image2[i-3][j+3])/25);
-    }   //                 2 1            0 1          0 2             1   2             0 0           2 2             2 0                1 0             1    1
+    }   
   }
   // firt rows
 for (int i = 0; i < 3; i++) {
       for (int j = 1; j < SIZE-3; j++) {
+          // get all pixels below first pixels
         image[i][j] = ((image2[i+1][j+1]+image2[i+1][j]+image2[i+1][j+1]+image2[i+1][j+2]+image2[i+1][j+3]+image2[i][j-1]+image2[i][j]+image2[i][j+1]+image2[i][j+2]+image2[i][j+3]+image2[i+1][j-1]+image2[i+1][j]+image2[i+1][j+1]+image2[i+1][j+2]+image2[i+1][j+3]+image2[i+2][j-1]+image2[i+2][j]+image2[i+2][j+1]+image2[i+2][j+2]+image2[i+2][j+3]+image2[i+3][j-1]+image2[i+3][j]+image2[i+3][j+1]+image2[i+3][j+2]+image2[i+3][j+3])/25);
       }
   }
   // first columns
-for (int i = 0; i < SIZE; i++) { 
+for (int i = 0; i < SIZE; i++) {
       for (int j = 0; j < 3; j++) {
-        if(i==255){
+        if(i==255){ // if it's the last row then get the pixels above this row because there aren't any rows below
           image[i][j] = ((image2[i-1][j-1]+image2[i-1][j]+image2[i-1][j+1]+image2[i-1][j+2]+image2[i-1][j+3]+image2[i][j-1]+image2[i][j]+image2[i][j+1]+image2[i][j+2]+image2[i][j+3]+image2[i-4][j-1]+image2[i-4][j]+image2[i-4][j+1]+image2[i-4][j+2]+image2[i-4][j+3]+image2[i-2][j-1]+image2[i-2][j]+image2[i-2][j+1]+image2[i-2][j+2]+image2[i-2][j+3]+image2[i-3][j-1]+image2[i-3][j]+image2[i-3][j+1]+image2[i-3][j+2]+image2[i-3][j+3])/25);}
-          //                  0 0               0 1             0 2           2 0          2 1                 2 2          1 0               1 1           1 2      
         else {
-          image[i][j] = ((image2[i-1][j-1]+image2[i-1][j]+image2[i-1][j+1]+image2[i-1][j+2]+image2[i-1][j+3]+image2[i][j-1]+image2[i][j]+image2[i][j+1]+image2[i][j+2]+image2[i][j+3]+image2[i+1][j-1]+image2[i+1][j]+image2[i+1][j+1]+image2[i+1][j+2]+image2[i+1][j+3]+image2[i+2][j-1]+image2[i+2][j]+image2[i+2][j+1]+image2[i+2][j+2]+image2[i+2][j+3]+image2[i+3][j-1]+image2[i+3][j]+image2[i+3][j+1]+image2[i+3][j+2]+image2[i+3][j+3])/25);}
-    }   //                 2 0              2 1            2 2            0   0             0 1         0 2             1 0            1 1             1    2
+          image[i][j] = ((image2[i+1][j-1]+image2[i+1][j]+image2[i+1][j+1]+image2[i+1][j+2]+image2[i+1][j+3]+image2[i][j-1]+image2[i][j]+image2[i][j+1]+image2[i][j+2]+image2[i][j+3]+image2[i+1][j-1]+image2[i+1][j]+image2[i+1][j+1]+image2[i+1][j+2]+image2[i+1][j+3]+image2[i+2][j-1]+image2[i+2][j]+image2[i+2][j+1]+image2[i+2][j+2]+image2[i+2][j+3]+image2[i+3][j-1]+image2[i+3][j]+image2[i+3][j+1]+image2[i+3][j+2]+image2[i+3][j+3])/25);}
+    }   
   }
   // last columns
 for (int i = 0; i < SIZE; i++) {
       for (int j = 253; j < SIZE; j++) {
-        if(i == 255){
+        if(i == 255){       // if it's the last row then get the pixels above this row because there aren't any rows below
           image[i][j] = ((image2[i-1][j-1]+image2[i-1][j]+image2[i-1][j+1]+image2[i-1][j+2]+image2[i-1][j+3]+image2[i][j-1]+image2[i][j]+image2[i][j+1]+image2[i][j+2]+image2[i][j+3]+image2[i-1][j-1]+image2[i-1][j]+image2[i-1][j+1]+image2[i-1][j+2]+image2[i-1][j+3]+image2[i-2][j-1]+image2[i-2][j]+image2[i-2][j+1]+image2[i-2][j+2]+image2[i-2][j+3]+image2[i-3][j-1]+image2[i-3][j]+image2[i-3][j+1]+image2[i-3][j+2]+image2[i-3][j+3])/25);}
-          //                  0 0               0 1             0 2           2 0          2 1                 2 2          1 0               1 1           1 2      
         else {
-        image[i][j] = ((image2[i-1][j-1]+image2[i-1][j]+image2[i-1][j+1]+image2[i-1][j+2]+image2[i-1][j+3]+image2[i][j-1]+image2[i][j]+image2[i][j+1]+image2[i][j+2]+image2[i][j+3]+image2[i+1][j-1]+image2[i+1][j]+image2[i+1][j+1]+image2[i+1][j+2]+image2[i+1][j+3]+image2[i+2][j-1]+image2[i+2][j]+image2[i+2][j+1]+image2[i+2][j+2]+image2[i+2][j+3]+image2[i+3][j-1]+image2[i+3][j]+image2[i+3][j+1]+image2[i+3][j+2]+image2[i+3][j+3])/25);}
-    }   //                 2 0              2 1            2 2            0   0             0 1         0 2             1 0            1 1             1    2
+        image[i][j] = ((image2[i+1][j-1]+image2[i+1][j]+image2[i+1][j+1]+image2[i+1][j+2]+image2[i+1][j+3]+image2[i][j-1]+image2[i][j]+image2[i][j+1]+image2[i][j+2]+image2[i][j+3]+image2[i+1][j-1]+image2[i+1][j]+image2[i+1][j+1]+image2[i+1][j+2]+image2[i+1][j+3]+image2[i+2][j-1]+image2[i+2][j]+image2[i+2][j+1]+image2[i+2][j+2]+image2[i+2][j+3]+image2[i+3][j-1]+image2[i+3][j]+image2[i+3][j+1]+image2[i+3][j+2]+image2[i+3][j+3])/25);}
+    }   
   }
 }
