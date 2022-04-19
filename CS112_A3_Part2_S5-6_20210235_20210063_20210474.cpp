@@ -11,12 +11,18 @@
 
 ifstream direction, direction_2 ;
 string file_1,file_2;
+
 using namespace std;
 unsigned char image[SIZE][SIZE];
 unsigned char image2[SIZE][SIZE];
 unsigned char image3[SIZE][SIZE];
 unsigned char flip[SIZE][SIZE];
 unsigned char edited[SIZE][SIZE];
+unsigned char new_image_part1[SIZE][SIZE];
+unsigned char new_image_part2[SIZE][SIZE];
+unsigned char new_image_part3[SIZE][SIZE];
+unsigned char new_image_part4[SIZE][SIZE];
+
 void loadImage ();
 void loadImage2 ();
 void saveImage ();
@@ -26,13 +32,19 @@ void black_and_white();
 void Filter_InvertImage();
 void Merge();
 void flip_image();
+void Darken_and_Lighten();
 void Rotate_file_90_Degree();
 void Rotate_file_180_Degree();
 void Rotate_file_270_Degree();
-void Darken_and_Lighten();
 void detect();
-void mirror();
+void enlarge();
 void shrink();
+void mirror();
+void shuffle();
+void record_part1();
+void record_part2();
+void record_part3();
+void record_part4();
 void blur();
 
 int main()
@@ -50,10 +62,10 @@ int main()
     cout << "5- Darken and Lighten Image\n";
     cout << "6- Rotate Image\n";
     cout << "7- Detect Image\n";
-    cout << "8- ??? Image\n";
+    cout << "8- Enlarge Image\n";
     cout << "9- Shrink Image\n";
     cout << "10- Mirror Image\n";
-    cout << "11- ??? Image\n";
+    cout << "11- Shuffle Image\n";
     cout << "12- Blur Image\n";
     cout << "0- Exit\n";
     // choose number one if you want Filter_InvertImage.
@@ -140,10 +152,10 @@ int main()
         saveImage();
     }
 
-    // if(num_of_filter == 8){
-    //   function();
-    //   saveImage3();
-    // }
+    if(num_of_filter == 8){
+      enlarge();
+      saveImage3();
+    }
     if(num_of_filter == 9){
       shrink();
       saveImage3();
@@ -152,10 +164,10 @@ int main()
        mirror();
        saveImage();
      }
-    // if(num_of_filter == 11){
-    //   function();
-    //   saveImage3();
-    // }
+    if(num_of_filter == 11){
+      shuffle();
+      saveImage();
+    }
     if(num_of_filter == 12){
       blur();
       saveImage();
@@ -370,40 +382,7 @@ void Darken_and_Lighten() { // Author: Abdallah Hussein Ibrahim Hussein - 202102
     break;
   }
 }
-void detect()// Author: Esraa Mahmoud Abdelmohsen - 20210063
-{
-    //make empty array in the first called edited.
-    for( int i=0;i<SIZE;i++)
-    {
-        for ( int j=0;j<SIZE;j++)
-            //make all indexes white.
-            edited[i][j]=255;
-    }
-    for (int i=0;i<SIZE;i++)
-    {
-        for(int j=0; j<SIZE;j++)
-        {
-            //check if the index[i][j]>128 and the index after it(for column) and <128 but black point in array edited
-            if (image[i][j]>128 && image[i][j+1]<128)
-                edited[i][j]=0;
-            //check if the index[i][j]<128 and the index after it and >128(for column) but black point in array edited
-            if (image[i][j]<128 && image[i][j+1]>128)
-                edited[i][j]=0;
-            //check if the index[i][j]>128 and the index after it and <128(for rows) but black point in array edited
-            if (image[i][j]>128 && image[i+1][j]<128)
-                edited[i][j]=0;
-            //check if the index[i][j]<128 and the index after it and >128(for rows) but black point in array edited
-            if (image[i][j]<128 && image[i+1][j]>128)
-                edited[i][j]=0;
-        }
-    }
-    for (int i=0;i<SIZE;i++)
-    {
-        for(int j=0;j<SIZE;j++)
-            //move what added in array edited in original image.
-            image[i][j]=edited[i][j];
-    }
-}
+
 // Function to Rotate 90 degree
 void Rotate_file_90_Degree() //Author: Youssef Abdelghafar Abdeltawab - 20210474
 {
@@ -443,6 +422,105 @@ void Rotate_file_270_Degree() // Author: Youssef Abdelghafar Abdeltawab - 202104
     {
         for (int j = 0; j < SIZE; j++) {
             swap(image[i][j], image[SIZE-i][SIZE-j]);
+        }
+    }
+}
+void detect()// Author: Esraa Mahmoud Abdelmohsen - 20210063
+{
+    //make empty array in the first called edited.
+    for( int i=0;i<SIZE;i++)
+    {
+        for ( int j=0;j<SIZE;j++)
+            //make all indexes white.
+            edited[i][j]=255;
+    }
+    for (int i=0;i<SIZE;i++)
+    {
+        for(int j=0; j<SIZE;j++)
+        {
+            //check if the index[i][j]>128 and the index after it(for column) and <128 but black point in array edited
+            if (image[i][j]>128 && image[i][j+1]<128)
+                edited[i][j]=0;
+            //check if the index[i][j]<128 and the index after it and >128(for column) but black point in array edited
+            if (image[i][j]<128 && image[i][j+1]>128)
+                edited[i][j]=0;
+            //check if the index[i][j]>128 and the index after it and <128(for rows) but black point in array edited
+            if (image[i][j]>128 && image[i+1][j]<128)
+                edited[i][j]=0;
+            //check if the index[i][j]<128 and the index after it and >128(for rows) but black point in array edited
+            if (image[i][j]<128 && image[i+1][j]>128)
+                edited[i][j]=0;
+        }
+    }
+    for (int i=0;i<SIZE;i++)
+    {
+        for(int j=0;j<SIZE;j++)
+            //move what added in array edited in original image.
+            image[i][j]=edited[i][j];
+    }
+}
+// enlarge is zooms in to a specific quarter of the four.
+void enlarge()       //Author: Youssef Abdelghafar Abdeltawab
+{
+    int quarter; // which quarter you want.
+    cout << "which quarter you want(1,2,3 or 4): ";
+    string rot; // this to definsev to code from crash.
+    while (true)
+    {
+      getline(cin, rot);
+      if(rot == "1" || rot == "2" || rot == "3"|| rot == "4")
+      {
+      quarter = stoi(rot);
+      break;}
+      else {
+      cout << "INVALD\n";
+      }
+    }
+    if (quarter == 1) { // to chosse first quarter and edit to pixels.
+        for (int i = 0, rows = 0; i < SIZE/2 && rows < SIZE ;++i,rows+=2) {
+            for (int j = 0,columns = 0; j < SIZE/2 && columns < SIZE; ++j,columns+=2) {
+                image3[rows][columns] = image[i][j];
+                image3[rows][columns+1] = image[i][j];
+                image3[rows+1][columns] = image[i][j];
+                image3[rows+1][columns+1] = image[i][j];
+            }
+        }
+    }
+    else if (quarter == 2)
+    {// to chosse secound quarter and edit to pixels.
+        for (int i = 0, rows = 0; i < SIZE/2 && rows < SIZE/2; ++i, rows+=1) {
+            for (int j = SIZE/2, columns = 0; j < SIZE && columns < SIZE/2; ++j, columns+=1) {
+                image3[rows*2][columns*2] = image[i][j];
+                image3[rows*2][columns*2+1] = image[i][j];
+                image3[rows*2+1][columns*2] = image[i][j];
+                image3[rows*2+1][columns*2+1] = image[i][j];
+            }
+        }
+    }
+    else if (quarter == 3)
+    {// to chosse third quarter and edit to pixels.
+        for (int i = SIZE/2, rows = 0; i < SIZE && rows < SIZE; ++i, rows+=2)
+        {
+            for (int j = 0, columns = 0; j < SIZE && columns < SIZE; ++j, columns+=2)
+            {
+                image3[rows][columns] = image[i][j];
+                image3[rows][columns+1] = image[i][j];
+                image3[rows+1][columns] = image[i][j];
+                image3[rows+1][columns+1] = image[i][j];
+            }
+        }
+    }
+    else if (quarter == 4)
+    {// to chosse quater four quarter and edit to pixels.
+        for (int i = SIZE/2, rows = 0; i < SIZE && rows < SIZE; ++i, rows+=2)
+        {
+            for (int j = SIZE/2, columns = 0; j < SIZE && columns < SIZE; ++j, columns+=2)
+            {
+                image3[rows][columns] = image[i][j];
+                image3[rows][columns+1] = image[i][j];
+                image3[rows+1][columns] = image[i][j];
+                image3[rows+1][columns+1] = image[i][j];
+            }
         }
     }
 }
@@ -589,7 +667,274 @@ void mirror()// Author: Esraa Mahmoud Abdelmohsen - 20210063
         }
     }
 }
+// shuffle It is dividing the image into four parts and rearranging them as desired by the user.
+void shuffle()          //Author: Youssef Abdelghafar Abdeltawab
+{
+    int part1, part2, part3, part4;
+    cout << "enter your order you want: " << endl;
+    cout << "Enter: ";
+    cin >> part1 >> part2 >> part3 >> part4;
+    record_part1(); // all this fuction record each part in one array.
+    record_part2();
+    record_part3();
+    record_part4();
+    if (part1 == 1)
+    { // this loop to move from part one to one.
+        int x = 0 , y = 0;
+        for (int i = 0; i < SIZE/2; i++)
+        {
+            for (int j = SIZE/2; j < SIZE; j++)
+            {
+                image[i][j] = new_image_part1[x][y++];
+            }
+            x++;
+            y = 0;
+        }
+    }
+    if (part1 == 2)
+    {// this loop to move from part two to one.
+        int x = 0 , y = 0;
+        for (int i = 0; i < 128; i++)
+        {
+            for (int j = 0; j < 128; j++)
+            {
+                image[i][j] = new_image_part2[x][y++];
+            }
+            x++;
+            y = 0;
+        }
+    }
+    if (part1 == 3)
+    {// this loop to move from part three to one.
+        int x = 0 , y = 0;
+        for (int i = 0; i < 128; i++)
+        {
+            for (int j = 0; j < 128; j++)
+            {
+                image[i][j] = new_image_part3[x][y++];
+            }
+            x++;
+            y = 0;
+        }
+    }
+    if (part1 == 4)
+    {// this loop to move from part four to one.
+        int x = 0 , y = 0;
+        for (int i = 0; i < 128; i++)
+        {
+            for (int j = 0; j < 128; j++)
+            {
+                image[i][j] = new_image_part4[x][y++];
+            }
+            x++;
+            y = 0;
+        }
+    }
+    if (part2 == 1)
+    {// this loop to move from part one to two.
+        int x = 0 , y = 0;
+        for (int i = 0; i < SIZE/2; i++)
+        {
+            for (int j = SIZE/2; j < SIZE; j++)
+            {
+                image[i][j] = new_image_part1[x][y++];
+            }
+            x++;
+            y = 0;
+        }
+    }
+    if (part2 == 2)
+    {// this loop to move from part two to two.
+        int x = 0 , y = 0;
+        for (int i = 0; i < SIZE/2; i++)
+        {
+            for (int j = SIZE/2; j < SIZE; j++)
+            {
+                image[i][j] = new_image_part2[x][y++];
+            }
+            x++;
+            y = 0;
+        }
+    }
+    if (part2 == 3)
+    {// this loop to move from part three to two.
+        int x = 0 , y = 0;
+        for (int i = 0; i < SIZE/2; i++)
+        {
+            for (int j = SIZE/2; j < SIZE; j++)
+            {
+                image[i][j] = new_image_part3[x][y++];
+            }
+            x++;
+            y = 0;
+        }
+    }
+    if (part2 == 4)
+    {// this loop to move from part four to two.
+        int x = 0 , y = 0;
+        for (int i = 0; i < SIZE/2; i++)
+        {
+            for (int j = SIZE/2; j < SIZE; j++)
+            {
+                image[i][j] = new_image_part4[x][y++];
+            }
+            x++;
+            y = 0;
+        }
+    }
+    if (part3 == 1)
+    {// this loop to move from part one to three.
+        int x = 0 , y = 0;
+        for (int i = SIZE/2; i < SIZE; i++)
+        {
+            for (int j = 0; j < SIZE/2; j++)
+            {
+                image[i][j] = new_image_part1[x][y++];
+            }
+            x++;
+            y = 0;
+        }
+    }
+    if (part3 == 2)
+    {// this loop to move from part two to three.
+        int x = 0 , y = 0;
+        for (int i = SIZE/2; i < SIZE; i++)
+        {
+            for (int j = 0; j < SIZE/2; j++)
+            {
+                image[i][j] = new_image_part2[x][y++];
+            }
+            x++;
+            y = 0;
+        }
+    }
+    if (part3 == 3)
+    {// this loop to move from part three to three.
+        int x = 0 , y = 0;
+        for (int i = SIZE/2; i < SIZE; i++)
+        {
+            for (int j = 0; j < SIZE/2; j++)
+            {
+                image[i][j] = new_image_part3[x][y++];
+            }
+            x++;
+            y = 0;
+        }
+    }
+    if (part3 == 4)
+    {// this loop to move from part four to three.
+        int x = 0 , y = 0;
+        for (int i = SIZE/2; i < SIZE; i++)
+        {
+            for (int j = 0; j < SIZE/2; j++)
+            {
+                image[i][j] = new_image_part4[x][y++];
+            }
+            x++;
+            y = 0;
+        }
+    }
+    if (part4 == 1)
+    {// this loop to move from part one to four.
+        int x = 0 , y = 0;
+        for (int i = SIZE/2; i < SIZE; i++)
+        {
+            for (int j = SIZE/2; j < SIZE; j++)
+            {
+                image[i][j] = new_image_part1[x][y++];
+            }
+            x++;
+            y = 0;
+        }
+    }
+    if (part4 == 2)
+    {// this loop to move from part two to four.
+        int x = 0 , y = 0;
+        for (int i = SIZE/2; i < SIZE; i++)
+        {
+            for (int j = SIZE/2; j < SIZE; j++)
+            {
+                image[i][j] = new_image_part2[x][y++];
+            }
+            x++;
+            y = 0;
+        }
+    }
+    if (part4 == 3)
+    {// this loop to move from part three to four.
 
+        int x = 0 , y = 0;
+        for (int i = SIZE/2; i < SIZE; i++)
+        {
+            for (int j = SIZE/2; j < SIZE; j++)
+            {
+                image[i][j] = new_image_part3[x][y++];
+            }
+            x++;
+            y = 0;
+        }
+    }
+    if (part4 == 4)
+    {// this loop to move from part four to four.
+        int x = 0 , y = 0;
+        for (int i = SIZE/2; i < SIZE; i++)
+        {
+            for (int j = SIZE/2; j < SIZE; j++)
+            {
+                image[i][j] = new_image_part4[x][y++];
+            }
+            x++;
+            y = 0;
+        }
+    }
+}
+// record (part1/part2/part3/part4) to record each quarter in new array.
+void record_part1()     //Author: Youssef Abdelghafar Abdeltawab
+{
+    int s=0,p=0;
+    for (int i = 0; i < SIZE/2; ++i) {
+        for (int j = 0; j < SIZE/2; ++j)
+        {
+            new_image_part1[p][s++] = image[i][j];
+        }
+        p++;
+        s=0;
+    }
+}
+void record_part2()         //Author: Youssef Abdelghafar Abdeltawab
+{
+    int s=0,p=0;
+    for (int i = 0; i < SIZE/2; ++i) {
+        for (int j = SIZE/2; j < SIZE; ++j) {
+            new_image_part2[p][s++] = image[i][j];
+        }
+        p++;
+        s=0;
+    }
+}
+void record_part3()     //Author: Youssef Abdelghafar Abdeltawab
+{
+    int s = 0 , p = 0;
+    for (int i = SIZE/2; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE/2; ++j) {
+            new_image_part3[p][s++] = image[i][j];
+        }
+        p++;
+        s = 0;
+    }
+}
+
+void record_part4()         //Author: Youssef Abdelghafar Abdeltawab
+{
+    int s = 0, p = 0;
+    for (int i = SIZE/2; i < SIZE; ++i) {
+        for (int j = SIZE/2; j < SIZE; ++j) {
+            new_image_part4[p][s++] = image[i][j];
+        }
+        p++;
+        s = 0;
+    }
+}
 void blur() { //Author: Abdallah Hussein Ibrahim Hussein - 20210235
   for (int i = 0; i <= SIZE; i++)
 {
